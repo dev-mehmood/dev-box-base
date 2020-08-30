@@ -13,6 +13,22 @@ const shellJs = require("shelljs");
 // Simple Git with Promise for handling success and failure
 const simpleGitPromise = require("simple-git/promise")();
 const readline = require("readline");
+
+
+
+
+var rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+function input(prompt, callback) {
+  rl.question(prompt, function (x) {
+    rl.close();
+    callback(x);
+  });
+}
+
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);
@@ -59,37 +75,18 @@ async function exec_it() {
     const password = process.env.GIT_USER_PASSWORD;
     const gitHubUrl = `https://${userName}:${password}@github.com/${userName}/${repo}`;
     // add local git config like username and email
-    
-    simpleGit.addConfig("user.email", process.env.GIT_USER_EMAIL);
-    simpleGit.addConfig("user.name", userName);
 
-    await simpleGitPromise.remote('add', 'origin', gitHubUrl + '.git')
-    // await simpleGit.clone(gitHubUrl)
+    // simpleGit.addConfig("user.email", process.env.GIT_USER_EMAIL);
+    // simpleGit.addConfig("user.name", userName);
+
+    await simpleGitPromise.add(".");
+    const message = input("Commit Message Input: ", console.log);
+    await simpleGitPromise.raw(['commit', '-n', '-m', message])
     await simpleGitPromise.push("origin", "master");
-    
-    // .then(() => {
-    //      simpleGitPromise.push("origin", "master");
-    // })
-    // .catch((e)=>{
-    //     console.log(e)
-    // })
-    // await simpleGitPromise.addRemote('origin', gitHubUrl);
-    // await simpleGitPromise.add(".");
-    // await simpleGitPromise.raw(['commit','-n','-m', 'test commit'])
-    
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout
-    });
-    // const question = promisify(rl.question);
-    rl.question(
-      "Please type commit message and press enter", (message)=> {
-        rl.close();
-        // simpleGitPromise.raw(['commit','-n','-m', message])
-        // simpleGitPromise.push("origin", "master");
-      }
-    );
-   
+
+
+
+
   } catch (e) {
     throw e;
   }
