@@ -12,23 +12,9 @@ const simpleGit = require("simple-git")();
 const shellJs = require("shelljs");
 // Simple Git with Promise for handling success and failure
 const simpleGitPromise = require("simple-git/promise")();
-const readline = require("readline");
 
 
-
-
-var rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
-function input(prompt, callback) {
-  rl.question(prompt, function (x) {
-    rl.close();
-    callback(x);
-  });
-}
-
+const prompt = require('prompt-sync')();
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);
@@ -76,13 +62,15 @@ async function exec_it() {
     const gitHubUrl = `https://${userName}:${password}@github.com/${userName}/${repo}`;
     // add local git config like username and email
 
-    // simpleGit.addConfig("user.email", process.env.GIT_USER_EMAIL);
-    // simpleGit.addConfig("user.name", userName);
+    simpleGit.addConfig("user.email", process.env.GIT_USER_EMAIL);
+    simpleGit.addConfig("user.name", userName);
 
     await simpleGitPromise.add(".");
-    const message = input("Commit Message Input: ", console.log);
-    await simpleGitPromise.raw(['commit', '-n', '-m', message])
-    await simpleGitPromise.push("origin", "master");
+    const message = prompt('What is your name?');
+      await simpleGitPromise.raw(['commit', '-n', '-m', message])
+      await simpleGitPromise.push("origin", "master");
+    
+    
 
 
 
