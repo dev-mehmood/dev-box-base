@@ -66,14 +66,14 @@ async function exec_it() {
     simpleGit.addConfig("user.name", userName);
 
     await simpleGitPromise.add(".");
-    const message = prompt('What is your name?');
-      await simpleGitPromise.raw(['commit', '-n', '-m', message])
-      await simpleGitPromise.push("origin", "master");
-    
-    
+    const message = prompt('Enter commit message:');
+    console.log(message)
+    await simpleGitPromise.raw(['commit', '-m', message])
+    await simpleGitPromise.push("origin", "master");
 
-
-
+    // deploy to stage or prod
+    // const deployMod = prompt('Select deploy mode ["prod","stage"]:');
+    // 
 
   } catch (e) {
     throw e;
