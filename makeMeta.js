@@ -3,7 +3,7 @@ const path = require("path");
 const promisify = require("promisify-node");
 
 const fs = promisify("fs");
-
+const chalk = require('chalk')
 const { exec, spawn, fork, execFile } = require("promisify-child-process");
 // const fileName = 'root-config.js';
 // Simple-git without promise
@@ -64,7 +64,7 @@ async function exec_it() {
 
     simpleGit.addConfig("user.email", process.env.GIT_USER_EMAIL);
     simpleGit.addConfig("user.name", userName);
-
+    
     await simpleGitPromise.add(".");
     const message = prompt('Enter commit message:');
     console.log(message)
