@@ -1,3 +1,4 @@
+//https://medium.com/meshstudio/continuous-integration-with-circleci-and-nodejs-44c3cf0074a0
 //requiring path and fs modules
 const path = require("path");
 const promisify = require("promisify-node");
@@ -30,30 +31,30 @@ const asyncFilter = async (arr, predicate) =>
 
 async function exec_it() {
   try {
-    //     const { stdout, stderr } = await exec("npm run build");
+        const { stdout, stderr } = await exec("npm run build");
 
-    //     const directoryPath = path.join(__dirname, "dist");
+        const directoryPath = path.join(__dirname, "dist");
 
-    //     let files = await fs.readdir(directoryPath);
-    //     let hash = "";
-    //     files = files.filter(function (file) {
-    //         const stat = fs.statSync(directoryPath + "/" + file);
+        let files = await fs.readdir(directoryPath);
+        let hash = "";
+        files = files.filter(function (file) {
+            const stat = fs.statSync(directoryPath + "/" + file);
 
-    //         if (stat.isDirectory()) {
-    //             hash = file;
-    //             return false;
-    //         }
-    //         return true;
-    //     });
+            if (stat.isDirectory()) {
+                hash = file;
+                return false;
+            }
+            return true;
+        });
 
-    //     asyncForEach(files, async function (file) {
-    //         await fs.rename(
-    //             path.join(directoryPath, file),
-    //             path.join(directoryPath, hash, file)
-    //         );
-    //     });
+        asyncForEach(files, async function (file) {
+            await fs.rename(
+                path.join(directoryPath, file),
+                path.join(directoryPath, hash, file)
+            );
+        });
 
-    //     await fs.writeFile(`${directoryPath}/meta.txt`, hash);
+        await fs.writeFile(`${directoryPath}/meta.txt`, hash);
     shellJs.cd(__dirname);
     const repo = process.env.GIT_REPO;
     // User name and password of your GitHub
