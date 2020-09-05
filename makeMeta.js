@@ -2,7 +2,7 @@
 //requiring path and fs modules
 const path = require("path");
 const promisify = require("promisify-node");
-
+const axios = require('axios');
 const fs = promisify("fs");
 const chalk = require('chalk')
 const { exec, spawn, fork, execFile } = require("promisify-child-process");
@@ -22,6 +22,7 @@ async function asyncForEach(array, callback) {
   }
 }
 require("dotenv").config();
+
 // sequentially
 const asyncFilter = async (arr, predicate) =>
   arr.reduce(
@@ -72,10 +73,20 @@ async function exec_it() {
     await simpleGitPromise.raw(['commit', '-m', message])
     await simpleGitPromise.push("origin", "master");
 
-    // deploy to stage or prod
-    // const deployMod = prompt('Select deploy mode ["prod","stage"]:');
-    // 
-    const { stdou, stder } = await exec("bash ./push.sh");
+    
+
+    // axios.defaults.headers.common['Authorization'] = `Bearer ${process.env.USER_NAME}:${process.env.USER_PASS}` 
+    // let file = await axios.get('https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/meta.txt')
+    // console.log(`https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/${file.data}/root-config.js`)
+    // const x = await axios({
+    //   method: 'post',
+    //   url: 'http://localhost:5000/services/?env=prod',
+    //   data: {
+    //     "service":"@dev-box/root-config",
+    //     url: `https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/${file.data}/root-config.js`
+    //   }
+    // });
+    
   } catch (e) {
     throw e;
   }
