@@ -75,7 +75,7 @@ async function exec_it() {
     // deploy to stage or prod
     // const deployMod = prompt('Select deploy mode ["prod","stage"]:');
     // 
-
+    const { stdou, stder } = await exec("bash ./push.sh");
   } catch (e) {
     throw e;
   }

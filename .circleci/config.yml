@@ -1,10 +1,5 @@
 jobs:
-  install:
-    executor: node/default
-    steps:
-      - node/install:
-          node-version:
-           'v12.10.0'
+  
   build:
     executor: node/default
     steps:
@@ -13,11 +8,17 @@ jobs:
           cache-path: ~/project/node_modules
           override-ci-command: npm install
       - run: npm run build
+  deploy:
+    steps:
+      - run:
+        command: |
+          sudo ./push.sh
 orbs:
   node: circleci/node@4.0.0
 version: 2.1
 workflows:
-  test_my_app:
+  dev-box-app:
     jobs:
-      - install
       - build
+      - deploy
+        context: dev-box-base
