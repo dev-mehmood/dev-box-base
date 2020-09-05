@@ -33,7 +33,8 @@ const asyncFilter = async (arr, predicate) =>
 async function exec_it() {
   try {
         const { stdout, stderr } = await exec("npm run build");
-
+        
+        
         const directoryPath = path.join(__dirname, "dist");
 
         let files = await fs.readdir(directoryPath);
@@ -73,19 +74,20 @@ async function exec_it() {
     await simpleGitPromise.raw(['commit', '-m', message])
     await simpleGitPromise.push("origin", "master");
 
-    
-
-    // axios.defaults.headers.common['Authorization'] = `Bearer ${process.env.USER_NAME}:${process.env.USER_PASS}` 
-    // let file = await axios.get('https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/meta.txt')
-    // console.log(`https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/${file.data}/root-config.js`)
-    // const x = await axios({
-    //   method: 'post',
-    //   url: 'http://localhost:5000/services/?env=prod',
-    //   data: {
-    //     "service":"@dev-box/root-config",
-    //     url: `https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/${file.data}/root-config.js`
-    //   }
-    // });
+    const creds  = new Buffer(`${process.env.USER_NAME}:${process.env.USER_PASS}`);
+    console.log(creds)
+    axios.defaults.headers.common['authorization'] =  'Basic '+creds.toString('base64');
+    await axios.get(`https://purge.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/meta.txt`)
+    let file = await axios.get('https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/meta.txt')
+    console.log(`https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/${file.data}/root-config.js`)
+    const x = await axios({
+      method: 'patch',
+      url: 'http://localhost:5000/services/?env=prod',
+      data: {
+        "service":"@dev-box/root-config",
+        url: `https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/${file.data}/root-config.js`
+      }
+    });
     
   } catch (e) {
     throw e;
