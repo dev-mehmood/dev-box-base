@@ -32,7 +32,7 @@ const asyncFilter = async (arr, predicate) =>
 
 async function exec_it() {
   try {
-        const { stdout, stderr } = await exec("npm run build");
+        const { stdout, stderr } = await exec("npm run build:prod");
         
         
         const directoryPath = path.join(__dirname, "dist");
@@ -82,7 +82,7 @@ async function exec_it() {
     console.log(`https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/${file.data}/root-config.js`)
     const x = await axios({
       method: 'patch',
-      url: 'http://localhost:5000/services/?env=prod',
+      url: 'http://localhost:5000/services/?env=stage',
       data: {
         "service":"@dev-box/root-config",
         url: `https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/${file.data}/root-config.js`
