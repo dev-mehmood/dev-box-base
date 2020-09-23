@@ -100,6 +100,7 @@ async function exec_it() {
     });
 
   } catch (e) {
+    console.dir(e)
     throw e;
   }
 }
