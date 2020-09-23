@@ -75,7 +75,7 @@ async function exec_it() {
     await simpleGitPromise.push("origin", "master");
 
     // const creds  = new Buffer(`${process.env.USER_NAME}:${process.env.USER_PASS}`);
-    console.log(creds)
+    // console.log(creds)
     // axios.defaults.headers.common['authorization'] =  'Basic '+creds.toString('base64');
     // axios.defaults.headers.common['authorization'] =  'Basic '+creds.toString('base64');
 
