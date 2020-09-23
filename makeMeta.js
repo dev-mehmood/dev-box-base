@@ -32,31 +32,31 @@ const asyncFilter = async (arr, predicate) =>
 
 async function exec_it() {
   try {
-        const { stdout, stderr } = await exec("npm run build:prod");
-        
-        
-        const directoryPath = path.join(__dirname, "dist");
+    const { stdout, stderr } = await exec("npm run build:prod");
 
-        let files = await fs.readdir(directoryPath);
-        let hash = "";
-        files = files.filter(function (file) {
-            const stat = fs.statSync(directoryPath + "/" + file);
 
-            if (stat.isDirectory()) {
-                hash = file;
-                return false;
-            }
-            return true;
-        });
+    const directoryPath = path.join(__dirname, "dist");
 
-        asyncForEach(files, async function (file) {
-            await fs.rename(
-                path.join(directoryPath, file),
-                path.join(directoryPath, hash, file)
-            );
-        });
+    let files = await fs.readdir(directoryPath);
+    let hash = "";
+    files = files.filter(function (file) {
+      const stat = fs.statSync(directoryPath + "/" + file);
 
-        await fs.writeFile(`${directoryPath}/meta.txt`, hash);
+      if (stat.isDirectory()) {
+        hash = file;
+        return false;
+      }
+      return true;
+    });
+
+    asyncForEach(files, async function (file) {
+      await fs.rename(
+        path.join(directoryPath, file),
+        path.join(directoryPath, hash, file)
+      );
+    });
+
+    await fs.writeFile(`${directoryPath}/meta.txt`, hash);
     shellJs.cd(__dirname);
     const repo = process.env.GIT_REPO;
     // User name and password of your GitHub
@@ -67,28 +67,38 @@ async function exec_it() {
 
     simpleGit.addConfig("user.email", process.env.GIT_USER_EMAIL);
     simpleGit.addConfig("user.name", userName);
-    
+
     await simpleGitPromise.add(".");
     const message = prompt('Enter commit message:');
     console.log(message)
     await simpleGitPromise.raw(['commit', '-m', message])
     await simpleGitPromise.push("origin", "master");
 
-    const creds  = new Buffer(`${process.env.USER_NAME}:${process.env.USER_PASS}`);
+    // const creds  = new Buffer(`${process.env.USER_NAME}:${process.env.USER_PASS}`);
     console.log(creds)
-    axios.defaults.headers.common['authorization'] =  'Basic '+creds.toString('base64');
+    // axios.defaults.headers.common['authorization'] =  'Basic '+creds.toString('base64');
+    // axios.defaults.headers.common['authorization'] =  'Basic '+creds.toString('base64');
+
+    const token = await axios({
+      url: `https://dev-box-spa-stage.herokuapp.com/auth/login`,
+      method: 'post',
+      data: { email: process.env.USER_EMAIL, password: process.env.USER_PASS }
+    })
+
     await axios.get(`https://purge.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/meta.txt`)
-    let file = await axios.get('https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/meta.txt')
-    console.log(`https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/${file.data}/root-config.js`)
+    const { data } = await axios.get('https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/meta.txt')
+    console.log(`https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/${data}/root-config.js`)
     const x = await axios({
       method: 'patch',
-      url: 'http://localhost:5000/services/?env=stage',
+      url: 'https://dev-box-spa-stage.herokuapp.com/import-maps/import-map.json',
       data: {
-        "service":"@dev-box/root-config",
-        url: `https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/${file.data}/root-config.js`
+        "imports": {
+          "@dev-box/root-config": `https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/${data}/root-config.js`
+        },
+        "mode": "stage"
       }
     });
-    
+
   } catch (e) {
     throw e;
   }
