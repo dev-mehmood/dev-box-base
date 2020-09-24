@@ -22,20 +22,60 @@ async function asyncForEach(array, callback) {
   }
 }
 require("dotenv").config();
+getDevBoxSpaURL = () => {
 
+  switch (process.env.MODE) {
+    case 'production':
+      return process.env.DEV_BOX_SPA_URI_PRODUCTION;
+    case 'stage':
+    default:
+      return process.env.DEV_BOX_SPA_URI_STAGE;
+  }
+
+}
+getOutDirPath = () => {
+  let outPath = 'dist'
+  switch (process.env.MODE) {
+    case 'production':
+      outPath = 'prod'; break;
+    case 'stage':
+    default:
+      break;
+  }
+  return outPath;
+}
 // sequentially
 const asyncFilter = async (arr, predicate) =>
   arr.reduce(
     async (memo, e) => [...(await memo), ...((await predicate(e)) ? [e] : [])],
     []
   );
+let count = 0
+setModePrompt = async () => {
+  shellJs.cd(__dirname);
+  const modes = ['production', 'stage'];
+  const mode = prompt('Enter Mode "production" or "stage":');
+  if (modes.includes(mode)) {
+    console.log('OK .....')
+    return process.env.MODE = mode
+  }
+  console.log('Wrong value provided; try again')
+  count++
+  if (count > 3) throw Error('Please restart the program')
+  setModePrompt();
 
+}
 async function exec_it() {
   try {
+    
+    // set process.env.mode by user selection prompt
+    await setModePrompt();
+
+    console.log(process.env.MODE);
+
+
     const { stdout, stderr } = await exec("npm run build:prod");
-
-
-    const directoryPath = path.join(__dirname, "dist");
+    const directoryPath = path.join(__dirname, getOutDirPath());
 
     let files = await fs.readdir(directoryPath);
     let hash = "";
@@ -79,26 +119,26 @@ async function exec_it() {
     // axios.defaults.headers.common['authorization'] =  'Basic '+creds.toString('base64');
     // axios.defaults.headers.common['authorization'] =  'Basic '+creds.toString('base64');
 
-    const token = await axios({
+    const { data: { token } } = await axios({
       url: `https://dev-box-spa-stage.herokuapp.com/auth/login`,
       method: 'post',
       data: { email: process.env.USER_EMAIL, password: process.env.USER_PASS }
     })
-
+    axios.defaults.headers.common['x-access-token'] = token
     await axios.get(`https://purge.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/meta.txt`)
     const { data } = await axios.get('https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/meta.txt')
     console.log(`https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/${data}/root-config.js`)
     const x = await axios({
       method: 'patch',
-      url: 'https://dev-box-spa-stage.herokuapp.com/import-maps/import-map.json',
+      url: `${getDevBoxSpaURL()}/import-maps/import-map.json`,
       data: {
         "imports": {
-          "@dev-box/root-config": `https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/dist/${data}/root-config.js`
+          "@dev-box/root-config": `https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base/${getOutDirPath()}/${data}/root-config.js`
         },
         "mode": "stage"
       }
     });
-
+    // console.log(x)
   } catch (e) {
     console.dir(e)
     throw e;

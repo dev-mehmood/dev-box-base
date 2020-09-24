@@ -1,11 +1,19 @@
 const path = require("path");
-
+require('dotenv').config();
+let outPath ='dist'
+switch (process.env.MODE){
+  case 'production' :
+      outPath = 'prod'; break;
+  case 'stage':
+  default : 
+      break;
+}
 module.exports = {
   entry: __dirname + "/src/root-config-dist.js",
   devtool: "sourcemap",
   output: {
     filename: "[hash]/root-config.js",
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, outPath),
     libraryTarget: "system"
   },
   module: {
