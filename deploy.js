@@ -316,7 +316,7 @@ module.exports.pushToGit = async function () {
     // User name and password of your GitHub
     const userName = process.env.GIT_USER_NAME;
     const password = process.env.GIT_USER_PASSWORD;
-    // const gitHubUrl = `https://${userName}:${password}@github.com/${userName}/${repo}`;
+    const remote = `https://${userName}:${password}@github.com/${userName}/${repo}`;
     // add local git config like username and email
 
     simpleGit.addConfig("user.email", process.env.GIT_USER_EMAIL);
@@ -327,7 +327,9 @@ module.exports.pushToGit = async function () {
      const message = 'test commit'
     console.log(message);
     await simpleGitPromise.raw(['commit', '-m', message]);
-    await simpleGitPromise.push("origin", "master");
+    const pushes = await this.gitPush(userName, password)
+    console.log('pushes')
+    // await simpleGitPromise.push("origin", "master");
 }
 
 module.exports.tagProduction = async function () {
@@ -344,3 +346,13 @@ module.exports.tagProduction = async function () {
 
 //https://medium.com/meshstudio/continuous-integration-with-circleci-and-nodejs-44c3cf0074a0
 this.deploy()
+module.exports.gitPush = async function (user, pass){
+  const remotes = await simpleGitPromise.getRemotes(true);
+if (remotes.length) { // Otherwise it's a local repository, no push
+    let remote = remotes[0].name; 
+    if (remotes[0].refs.push.indexOf("@") < 0) { // credentials aren't in the remote ref
+        remote = remotes[0].refs.push.replace("://", `://${USER}:${PASSWORD}@`);
+    }
+  return await simpleGitPromise.push(remote, "master");
+}
+}
