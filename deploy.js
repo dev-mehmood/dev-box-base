@@ -334,7 +334,12 @@ module.exports.pushToGit = async function () {
 
 module.exports.tagProduction = async function () {
     await this.pushToGit();
-    const lastTag = await simpleGitPromise.raw(['describe', "--exact-match", '--abbrev=0'])
+    let lastTag = ''
+    try  {
+       lastTag = await simpleGitPromise.raw(['describe', "--exact-match", '--abbrev=0'])
+    } catch(e) {
+      console.log(e)
+    }
     let tagName = 'v1.0.0', tagMessage = 'Test deployment v1.0.0'
     
     // tagName = prompt('Enter Production Tag Name:');
