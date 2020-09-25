@@ -325,7 +325,7 @@ module.exports.pushBuildToGit = async function () {
   const password = process.env.GIT_USER_PASSWORD;
   const gitHubUrl = `https://${userName}:${password}@github.com/${userName}/${repo}`;
   // add local git config like username and email
-
+  simpleGit.init().addRemote('origin', gitHubUrl)
   simpleGit.addConfig("user.email", process.env.GIT_USER_EMAIL);
   simpleGit.addConfig("user.name", userName);
   
