@@ -257,7 +257,7 @@ module.exports.deploy = async function () {
     if (!['production', 'stage'].includes(mode)) throw Error("Either 'production' of 'stage' required")
     process.env.MODE = mode;
     // this.setMode();
-
+    
     // await exec(`rimref dist`); // delete dist folder
     await exec("npm run build:prod"); // run build:stage command for webpack
     await this.pushBuildToGit()
