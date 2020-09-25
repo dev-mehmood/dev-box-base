@@ -196,7 +196,7 @@ const prompt = require('prompt-sync')();
 const userName = process.env.GIT_USER_NAME;
 const password = process.env.GIT_USER_PASSWORD;
 const repo = process.env.GIT_REPO;
-const remote = `https://${userName}:${password}@github.com/${userName}/${repo}`;
+const remote_ = `https://${userName}:${password}@github.com/${userName}/${repo}`;
 // add local git config like username and email
 const userEmail = process.env.GIT_USER_EMAIL;
 
