@@ -63,4 +63,4 @@ typings/
 # dist
 .DS_Store
 push.sh
-deploy_
+deploy_/
