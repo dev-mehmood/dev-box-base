@@ -331,9 +331,9 @@ module.exports.pushToGit = async function () {
   const message = 'test commit'
   // console.log(message);
   await simpleGitPromise.raw(['commit', '-m', message]);
-  const pushes = await this.gitPush(userName, password)
-  console.log('pushes')
-  // await simpleGitPromise.push("origin", "master");
+  // const pushes = await this.gitPush(userName, password)
+  // console.log('pushes')
+  await simpleGitPromise.push("origin", "master");
 }
 
 module.exports.tagProduction = async function () {
