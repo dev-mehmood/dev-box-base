@@ -355,15 +355,20 @@ module.exports.tagProduction = async function () {
 }
 
 //https://medium.com/meshstudio/continuous-integration-with-circleci-and-nodejs-44c3cf0074a0
-this.deploy()
+this.deploy();
+
 module.exports.gitPush = async function () {
-  const remotes = await simpleGitPromise.getRemotes(true);
-  if (remotes.length) { // Otherwise it's a local repository, no push
-    let remote = remotes[0].name;
-    if (remotes[0].refs.push.indexOf("@") < 0) { // credentials aren't in the remote ref
-      remote = remotes[0].refs.push.replace("://", `://${userName}:${userEmail}@`);
+  try{
+    const remotes = await simpleGitPromise.getRemotes(true);
+    if (remotes.length) { // Otherwise it's a local repository, no push
+      let remote = remotes[0].name;
+      if (remotes[0].refs.push.indexOf("@") < 0) { // credentials aren't in the remote ref
+        remote = remotes[0].refs.push.replace("://", `://${userName}:${userEmail}@`);
+      }
+      return await simpleGitPromise.push(remote, "master");
     }
-    return await simpleGitPromise.push(remote, "master");
+  }catch(e){
+    return e
   }
 }
 
