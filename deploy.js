@@ -257,15 +257,15 @@ module.exports.deploy = async function () {
     if (!['production', 'stage'].includes(mode)) throw Error("Either 'production' of 'stage' required")
     process.env.MODE = mode;
     // this.setMode();
-    
+    console.log(mode)
     // await exec(`rimref dist`); // delete dist folder
     await exec("npm run build:prod"); // run build:stage command for webpack
     await this.pushBuildToGit()
 
-    if (process.env.MODE === 'stage') {
+    // if (process.env.MODE === 'stage') {
      
-      await this.updateImportMapStage()
-    }
+    //   await this.updateImportMapStage()
+    // }
 
     if (process.env.MODE === 'production') {
       
@@ -330,11 +330,11 @@ module.exports.pushBuildToGit = async function () {
   simpleGit.addConfig("user.name", userName);
   
   await simpleGitPromise.add(".");
-  // const message = prompt('Enter commit message:');
-  // console.log(message)
-  let message = 'testing '
+  const message = prompt('Enter commit message:');
+  console.log(message)
+  // let message = 'testing '
   await simpleGitPromise.raw(['commit', '-m', message])
-  await simpleGitPromise.push("origin", "master");
+  return await simpleGitPromise.push("origin", "master");
 }
 
 module.exports.addProductionTag = async function () {
