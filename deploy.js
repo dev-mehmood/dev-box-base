@@ -260,15 +260,16 @@ module.exports.deploy = async function () {
 
     // await exec(`rimref dist`); // delete dist folder
     await exec("npm run build:prod"); // run build:stage command for webpack
-
+    await this.pushBuildToGit()
 
     if (process.env.MODE === 'stage') {
-      await this.pushToGit();
+     
       await this.updateImportMapStage()
     }
 
     if (process.env.MODE === 'production') {
-      const tag = await this.tagProduction();
+      
+      const tag = await this.addProductionTag();
       await this.updateImportMapProd(tag)
     }
 
@@ -317,41 +318,50 @@ module.exports.getAuthToken = async function (uri) {
   return token;
 }
 //https://dev.to/it if()next/the-ultimate-free-ci-cd-for-your-open-source-projects-3bkd
-module.exports.pushToGit = async function () {
-
-  // cd into current directory
-  shellJs.cd(__dirname);
-  
+module.exports.pushBuildToGit = async function () {
+  const repo = process.env.GIT_REPO;
   // User name and password of your GitHub
+  const userName = process.env.GIT_USER_NAME;
+  const password = process.env.GIT_USER_PASSWORD;
+  const gitHubUrl = `https://${userName}:${password}@github.com/${userName}/${repo}`;
+  // add local git config like username and email
 
-  simpleGit.addConfig("user.email", userEmail);
+  simpleGit.addConfig("user.email", process.env.GIT_USER_EMAIL);
   simpleGit.addConfig("user.name", userName);
+  
   await simpleGitPromise.add(".");
   // const message = prompt('Enter commit message:');
-  const message = 'test commit'
-  // console.log(message);
-  await simpleGitPromise.raw(['commit', '-m', message]);
-  // const pushes = await this.gitPush(userName, password)
-  // console.log('pushes')
+  // console.log(message)
+  let message = 'testing '
+  await simpleGitPromise.raw(['commit', '-m', message])
   await simpleGitPromise.push("origin", "master");
 }
 
-module.exports.tagProduction = async function () {
-  await this.pushToGit();
+module.exports.addProductionTag = async function () {
+  
   let lastTag = ''
   try {
     lastTag = await simpleGitPromise.raw(['describe', '--abbrev=0'])
   } catch (e) {
     console.log(e)
   }
+  
   let tagName = 'v1.0.0', tagMessage = 'Test deployment v1.0.0'
+  if(lastTag) {
+      tagName = lastTag
+  } 
 
   // tagName = prompt('Enter Production Tag Name:');
   // tagMessage = prompt('Enter Tag Message')
-  await simpleGitPromise.addAnnotatedTag(tagName, tagMessage);
-  await this.gitPushTag(tagName)
-  // await simpleGitPromise.push('origin', tagName)
-  return tagName
+  try {
+    await simpleGitPromise.addAnnotatedTag(tagName, tagMessage);
+    await this.gitPushTag(tagName)
+    // await simpleGitPromise.push('origin', tagName)
+    return tagName
+  } catch(e) {
+  
+  }
+  
 }
 
 //https://medium.com/meshstudio/continuous-integration-with-circleci-and-nodejs-44c3cf0074a0

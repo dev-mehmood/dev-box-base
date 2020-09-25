@@ -13,7 +13,7 @@ module.exports = {
   devtool: "sourcemap",
   output: {
     filename: "root-config.js",
-    path: path.resolve(__dirname, outPath),
+    path: path.resolve(__dirname, 'dist'),
     libraryTarget: "system"
   },
   module: {
