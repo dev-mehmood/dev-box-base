@@ -141,10 +141,10 @@ module.exports.tagProduction = async function () {
     const lastTag = await simpleGitPromise.raw(['describe',  '--abbrev=0'])
     let tagName = 'v1.0.0', tagMessage = 'First tag deployment v1.0.0'
     if(lastTag) {
-        console.log(lastTag)
+        console.log('Last tag on this branch is: ',lastTag)
     }
-    tagName = prompt('Enter Production Tag Name: \n');
-    tagMessage = prompt('Enter Tag Message: \n')
+    tagName = prompt('Enter Production Tag Name:');
+    tagMessage = prompt('Enter Tag Message:')
     await simpleGitPromise.addAnnotatedTag(tagName, tagMessage);
     await simpleGitPromise.pushTags('origin', tagName)
     return tagName
