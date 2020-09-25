@@ -259,8 +259,8 @@ module.exports.deploy = async function () {
         }
 
         if (process.env.MODE === 'production') {
-            const tag = this.tagProduction();
-            this.updateImportMapProd(tag)
+            const tag = await this.tagProduction();
+            await this.updateImportMapProd(tag)
         }
 
     } catch (e) {
@@ -325,7 +325,7 @@ module.exports.pushToGit = async function () {
     await simpleGitPromise.add(".");
     // const message = prompt('Enter commit message:');
      const message = 'test commit'
-    console.log(message);
+    // console.log(message);
     await simpleGitPromise.raw(['commit', '-m', message]);
     const pushes = await this.gitPush(userName, password)
     console.log('pushes')
@@ -333,7 +333,7 @@ module.exports.pushToGit = async function () {
 }
 
 module.exports.tagProduction = async function () {
-    this.pushToGit();
+    await this.pushToGit();
     const lastTag = await simpleGitPromise.raw(['describe', "--exact-match", '--abbrev=0'])
     let tagName = 'v1.0.0', tagMessage = 'Test deployment v1.0.0'
     
