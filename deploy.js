@@ -341,17 +341,18 @@ module.exports.tagProduction = async function () {
   let lastTag = ''
   try {
     lastTag = await simpleGitPromise.raw(['describe', "--exact-match", '--abbrev=0'])
+    let tagName = 'v1.0.0', tagMessage = 'Test deployment v1.0.0'
+
+    // tagName = prompt('Enter Production Tag Name:');
+    // tagMessage = prompt('Enter Tag Message')
+    await simpleGitPromise.addAnnotatedTag(tagName, tagMessage);
+    await this.gitPushTag(tagName)
+    // await simpleGitPromise.push('origin', tagName)
+    return tagName
   } catch (e) {
     console.log(e)
   }
-  let tagName = 'v1.0.0', tagMessage = 'Test deployment v1.0.0'
-
-  // tagName = prompt('Enter Production Tag Name:');
-  // tagMessage = prompt('Enter Tag Message')
-  await simpleGitPromise.addAnnotatedTag(tagName, tagMessage);
-  await this.gitPushTag(tagName)
-  // await simpleGitPromise.push('origin', tagName)
-  return tagName
+ 
 }
 
 //https://medium.com/meshstudio/continuous-integration-with-circleci-and-nodejs-44c3cf0074a0
