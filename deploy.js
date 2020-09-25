@@ -270,7 +270,7 @@ module.exports.deploy = async function () {
 
 }
 module.exports.updateImportMapStage = async function () {
-    const token = await getAuthToken(process.env.DEV_BOX_SPA_URI_STAGE);
+    const token = await this.getAuthToken(process.env.DEV_BOX_SPA_URI_STAGE);
     axios.defaults.headers.common['x-access-token'] = token;
     const x = await axios({
         method: 'patch',
@@ -285,7 +285,7 @@ module.exports.updateImportMapStage = async function () {
 
 }
 module.exports.updateImportMapProd = async function (tag) {
-    const token = await getAuthToken(process.env.DEV_BOX_SPA_URI_PRODUCTION);
+    const token = await this.getAuthToken(process.env.DEV_BOX_SPA_URI_PRODUCTION);
     axios.defaults.headers.common['x-access-token'] = token;
     const x = await axios({
         method: 'patch',
@@ -299,7 +299,7 @@ module.exports.updateImportMapProd = async function (tag) {
     });
 
 }
-module.exports.getAuthToken = async function getAuthToken(uri) {
+module.exports.getAuthToken = async function(uri) {
     const { data: { token } } = await axios({
         url: `${uri}/auth/login`,
         method: 'post',
