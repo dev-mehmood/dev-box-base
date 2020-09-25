@@ -365,7 +365,7 @@ module.exports.gitPush = async function () {
       if (remotes[0].refs.push.indexOf("@") < 0) { // credentials aren't in the remote ref
         remote = remotes[0].refs.push.replace("://", `://${userName}:${userEmail}@`);
       }
-     const pushes = await simpleGitPromise.push(remote, 'origin', "master");
+     const pushes = await simpleGitPromise.push(remote,  "master");
     
     }
   }catch(e){
