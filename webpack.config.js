@@ -12,7 +12,7 @@ module.exports = {
   entry: __dirname + "/src/root-config-dist.js",
   devtool: "sourcemap",
   output: {
-    filename: "[hash]/root-config.js",
+    filename: "root-config.js",
     path: path.resolve(__dirname, outPath),
     libraryTarget: "system"
   },

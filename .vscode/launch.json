@@ -8,8 +8,8 @@
             "name": "Launch makeMeta",
             "request": "launch",
             "type": "node",
-            
-            "program": "${workspaceFolder}/makeMeta.js"
+            "args": ["production"],
+            "program": "${workspaceFolder}/deploy.js"
         },
         {
             "type": "node",
