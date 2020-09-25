@@ -351,7 +351,7 @@ module.exports.gitPush = async function (user, pass){
 if (remotes.length) { // Otherwise it's a local repository, no push
     let remote = remotes[0].name; 
     if (remotes[0].refs.push.indexOf("@") < 0) { // credentials aren't in the remote ref
-        remote = remotes[0].refs.push.replace("://", `://${USER}:${PASSWORD}@`);
+        remote = remotes[0].refs.push.replace("://", `://${user}:${pass}@`);
     }
   return await simpleGitPromise.push(remote, "master");
 }
