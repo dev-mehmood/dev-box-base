@@ -340,19 +340,18 @@ module.exports.tagProduction = async function () {
   await this.pushToGit();
   let lastTag = ''
   try {
-    lastTag = await simpleGitPromise.raw(['describe', "--exact-match", '--abbrev=0'])
-    let tagName = 'v1.0.0', tagMessage = 'Test deployment v1.0.0'
-
-    // tagName = prompt('Enter Production Tag Name:');
-    // tagMessage = prompt('Enter Tag Message')
-    await simpleGitPromise.addAnnotatedTag(tagName, tagMessage);
-    await this.gitPushTag(tagName)
-    // await simpleGitPromise.push('origin', tagName)
-    return tagName
+    lastTag = await simpleGitPromise.raw(['describe', '--abbrev=0'])
   } catch (e) {
     console.log(e)
   }
- 
+  let tagName = 'v1.0.0', tagMessage = 'Test deployment v1.0.0'
+
+  // tagName = prompt('Enter Production Tag Name:');
+  // tagMessage = prompt('Enter Tag Message')
+  await simpleGitPromise.addAnnotatedTag(tagName, tagMessage);
+  await this.gitPushTag(tagName)
+  // await simpleGitPromise.push('origin', tagName)
+  return tagName
 }
 
 //https://medium.com/meshstudio/continuous-integration-with-circleci-and-nodejs-44c3cf0074a0
@@ -366,7 +365,7 @@ module.exports.gitPush = async function () {
       if (remotes[0].refs.push.indexOf("@") < 0) { // credentials aren't in the remote ref
         remote = remotes[0].refs.push.replace("://", `://${userName}:${userEmail}@`);
       }
-      return await simpleGitPromise.push(remote, "master");
+      return simpleGitPromise.push(remote, 'origin', "master");
     }
   }catch(e){
     return e
@@ -380,6 +379,6 @@ module.exports.gitPushTag = async function (tag) {
     if (remotes[0].refs.push.indexOf("@") < 0) { // credentials aren't in the remote ref
       remote = remotes[0].refs.push.replace("://", `://${userName}:${password}@`);
     }
-    return await simpleGitPromise.push(remote, tag);
+    return await simpleGitPromise.pushTags(remote);
   }
 }
