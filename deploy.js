@@ -139,7 +139,13 @@ module.exports.pushToGit = async function () {
 
 module.exports.tagProduction = async function () {
     // await this.pushToGit();
-    const lastTag = await simpleGitPromise.raw(['describe',  '--abbrev=0'])
+    let lastTag=''
+    try{
+        lastTag = await simpleGitPromise.raw(['describe',  '--abbrev=0'])
+    }catch(e){
+        console.log(e)
+    }
+    
     let tagName = 'v1.0.0', tagMessage = 'First tag deployment v1.0.0'
     if(lastTag) {
         console.log('Last tag on this branch is: ',lastTag)
