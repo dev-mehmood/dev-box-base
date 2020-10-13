@@ -64,8 +64,8 @@
     "request": "^2.88.2"
   },
   "dependencies": {
-  
     "single-spa": "^4.3.4",
-    "single-spa-layout": "^1.0.0-beta.6"
+    "single-spa-layout": "^1.0.0-beta.6",
+    "version-incrementer": "^0.1.1"
   }
 }

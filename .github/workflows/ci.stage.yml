@@ -1,0 +1,52 @@
+name: CI
+# https://medium.com/@michaelekpang/creating-a-ci-cd-pipeline-using-github-actions-b65bb248edfe
+on:
+  push:
+    branches:
+      - stage
+      #
+  pull_request:
+    branches:
+      - stage
+
+jobs:
+  build: # Job name
+    runs-on: ubuntu-latest # which operating system will githbut do this job
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps: # multiple steps we need for this "build" job
+      - uses: actions/checkout@stage # switch to stage branch
+      - uses: actions/checkout@v1 # github will use checkout@v1 api of version one
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: yarn install
+        run: |
+          yarn install
+      - name: build stage 
+        run: |
+          npm run build:prod 
+      - name: curl
+        uses: wei/curl@v1
+        with:
+          args: --upload-file .github/workflows/main.yml https://transfer.sh/main-workflow.yml
+        env:
+          CI: true
+          GIT_USER_PASSWORD: ${{secrets.GIT_USER_PASSWORD}}
+          GIT_REPO: ${{secrets.GIT_REPO}}
+          GIT_USER_EMAIL: ${{secrets.GIT_USER_EMAIL}}
+          USER_EMAIL: ${{secrets.USER_EMAIL}}
+          USER_PASS: ${{secrets.USER_PASS}}
+          X-ACCESS-TOKEN: ${{secrets.X-ACCESS-TOKEN}}
+          DEV_BOX_SPA_URI_STAGE: ${{secrets.DEV_BOX_SPA_URI_STAGE}}
+          DEV_BOX_SPA_URI_PRODUCTION: ${{secrets.DEV_BOX_SPA_URI_PRODUCTION}}
+      - name: Add remote origin
+        run: |
+          git remote add stage https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
+      - name: Deploy to Heroku
+        run: |
+          git push stage HEAD:master -f

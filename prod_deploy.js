@@ -18,7 +18,6 @@ module.exports.asyncForEach = async function asyncForEach(array, callback) {
     }
 }
 
-
 // sequentially
 module.exports.asyncFilter = async (arr, predicate) =>
     arr.reduce(
@@ -44,11 +43,11 @@ module.exports.deploy = async function () {
     try {
         const mode = process.argv[2];
         process.env.MODE = mode;
-        if(!['production','stage'].includes(mode)) {
-            
-           await this.setMode();
+        if (!['production', 'stage'].includes(mode)) {
+
+            await this.setMode();
         }
-        
+
         // console.log(mode);
 
         // await exec(`rimref dist`); // delete dist folder
@@ -56,10 +55,10 @@ module.exports.deploy = async function () {
         await this.pushToGit();
         console.log('Code Pushed to git \n');
         if (process.env.MODE === 'stage') {
-           
+
             await this.updateImportMapStage()
         }
-        
+
         if (process.env.MODE === 'production') {
             const tag = await this.tagProduction();
             await this.updateImportMapProd(tag)
@@ -139,10 +138,10 @@ module.exports.pushToGit = async function () {
 
 module.exports.tagProduction = async function () {
     // await this.pushToGit();
-    const lastTag = await simpleGitPromise.raw(['describe',  '--abbrev=0'])
+    const lastTag = await simpleGitPromise.raw(['describe', '--abbrev=0'])
     let tagName = 'v1.0.0', tagMessage = 'First tag deployment v1.0.0'
-    if(lastTag) {
-        console.log('Last tag on this branch is: ',lastTag)
+    if (lastTag) {
+        console.log('Last tag on this branch is: ', lastTag)
     }
     tagName = prompt('Enter Production Tag Name:');
     tagMessage = prompt('Enter Tag Message:')
@@ -154,18 +153,18 @@ module.exports.tagProduction = async function () {
 //https://medium.com/meshstudio/continuous-integration-with-circleci-and-nodejs-44c3cf0074a0
 this.deploy()
 
-module.exports.init = () =>{
+module.exports.init = () => {
     const mode = process.argv[2];
     process.env.MODE = mode;
     const ciMode = process.argv[3];
-    if(ciMode && ciMode === 'stage') {
+    if (ciMode && ciMode === 'stage') {
         this.stageCI()
-    } else 
-    if(ciMode && ciMode === 'production') {
-        this.prodCI()
-    } else this.deploy()
+    } else
+        if (ciMode && ciMode === 'production') {
+            this.prodCI()
+        } else this.deploy()
 }
 
-module.exports.stageCI = ()=>{
+module.exports.stageCI = () => {
 
 }
