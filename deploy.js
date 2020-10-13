@@ -92,16 +92,21 @@ module.exports.updateImportMapStage = async function () {
 module.exports.updateImportMapProd = async function (tag) {
     const token = await this.getAuthToken(process.env.DEV_BOX_SPA_URI_PRODUCTION);
     axios.defaults.headers.common['x-access-token'] = token;
-    const x = await axios({
-        method: 'patch',
-        url: `${process.env.DEV_BOX_SPA_URI_PRODUCTION}/import-maps/import-map.json`,
-        data: {
-            "imports": {
-                "@dev-box/root-config": `https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base@${tag}/dist/root-config.js`
-            },
-            "mode": 'prod'
-        }
-    });
+    console.log('Tag ', tag)
+    try {
+        const x = await axios({
+            method: 'patch',
+            url: `${process.env.DEV_BOX_SPA_URI_PRODUCTION}/import-maps/import-map.json`,
+            data: {
+                "imports": {
+                    "@dev-box/root-config": `https://cdn.jsdelivr.net/gh/dev-mehmood/dev-box-base@${tag}/dist/root-config.js`
+                },
+                "mode": 'prod'
+            }
+        });
+    }catch(e){
+        console.log(e)
+    }
 
 }
 module.exports.getAuthToken = async function getAuthToken(uri) {
