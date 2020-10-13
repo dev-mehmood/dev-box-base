@@ -104,6 +104,7 @@ module.exports.updateImportMapProd = async function (tag) {
                 "mode": 'prod'
             }
         });
+        console.log(x)
     }catch(e){
         console.log(e)
     }
